@@ -48,7 +48,7 @@ embedding_dims = 100  # dimension of the hidden variable, i.e. the embedding dim
 
 
 #tokenizer = Tokenizer(num_words=max_features)
-tokenizer = Tokenizer(num_words=max_features, filters='"#$%&()*+,-./:;<=>?@[\\]^_`{|}~\t\n',
+tokenizer = Tokenizer(num_words=max_features, filters='"!#$%&()*+,-./:;<=>?@[\\]^_`{|}~\t\n',
                                    lower=True)
 tokenizer.fit_on_texts(list(X_train) + list(X_test))
 x_train = tokenizer.texts_to_sequences(X_train)
