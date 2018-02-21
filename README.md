@@ -14,3 +14,9 @@ Next try increasing max words to keep to 75K (triple) to offset thinning due to 
 Go back to 25K, caps to lower, but keep exclamation marks. 97.71 percent = better. Train two more epochs to compare to the first configuration, see above. Validation accuracy = 98.06 percent = again not bad, but nothing special and worse than the earlier model. 
 
 Given average train sequence length is 65, it might make sense to try attention model next. Additional simple strategy to try includes limiting the size of the non-offensive set to make the non-offensive/offensive more balanced - TBD.
+
+In the mean time, I ran a model prediction on a sample and there's work to be done. First, the model output is probabilities, not binary values. This is not a problem. The don't add to 1 per sample, i.e. looks like separate lable classification works (i.e. not like softmax). Setting a threshold for conversion of values into 1 is not a problem. The problem is that based on my sample of 8 entries, about 23 percent of labels would be misclassified - I picked the optimal threshold for this particular set that may or may not work for the population in general. 
+
+A question that needs answer: what exactly did the model mean when it measured accuracy? Ground truth labels are binary; predictions are probability, i.e. they are incompatible. Keras doesn't appear to have a function to convert probability predictions into binary. At any rate, the desired threshold would be much lower than 0.01.
+
+A possible solution: run separate predictive models for each of the classes separately, i.e. last dense layer will be dim = 1 with a sigmoid, assuming binary classification behaves properly for one-dimensional output. 

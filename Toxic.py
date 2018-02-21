@@ -120,4 +120,11 @@ model.compile(loss='binary_crossentropy',
  
 model.fit(data, labels, batch_size=batch_size, epochs=1, validation_split=0.2)
 
-       
+
+
+
+#TEST UTILITY
+sample = train_data.iloc[[6,12,16,42,43,51,55,65],]
+x_sample = tokenizer.texts_to_sequences(sample)
+sample_data = sequence.pad_sequences(x_sample, maxlen=maxlen)
+sample_result = model.predict(sample_data)
