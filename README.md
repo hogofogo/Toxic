@@ -23,9 +23,7 @@ Data examination revealed that a lot of toxic comments are caps and have a lot o
 
 ## Training
 
-In the mean time, I ran a model prediction on a sample and there's work to be done. First, the model output is probabilities, not binary values and it appears that Keras deprecated the conversion of probability outputs to binary values. 
-
-Next I undersampled non-toxic comments to make labels more balanced; this proved helpful. I built a dataset split approx 1:2 (all toxic comments and 2/3 random non-toxic comments) and trained it with 94 percent accuracy; mind that the baseline changed from ~90 percent non-toxic to ~65 percent non-toxic). It still remains skewed with respect to individual label types, but much less.
+In the mean time, I ran a model prediction on a sample and there's work to be done. First, the model output is probabilities, not binary values and it appears that Keras deprecated the conversion of probability outputs to binary values - not a problem, but will require a careful choice of threshold, and possibly separate for each label type if I decide to run separate trainings for each label type, like the below.
 
 I ran training separately for each label type on 1 epoch with this results:
 0: 0.8952 
