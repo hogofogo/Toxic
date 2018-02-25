@@ -143,19 +143,12 @@ def one_step_attention(a, s_prev):
     context -- context vector, input of the next (post-attetion) LSTM cell
     """
     
-    # Use repeator to repeat s_prev to be of shape (m, Tx, n_s) so that you can concatenate it with all hidden states "a" (≈ 1 line)
     s_prev = RepeatVector(maxlen)(s_prev)
-    # Use concatenator to concatenate a and s_prev on the last axis (≈ 1 line)
     concat = Concatenate(axis=-1)([a, s_prev])
-    # Use densor1 to propagate concat through a small fully-connected neural network to compute the "intermediate energies" variable e. (≈1 lines)
     e = Dense(10, activation = "tanh")(concat)
-    # Use densor2 to propagate e through a small fully-connected neural network to compute the "energies" variable energies. (≈1 lines)
     energies = Dense(1, activation = "relu")(e)
-    # Use "activator" on "energies" to compute the attention weights "alphas" (≈ 1 line)
     alphas = Activation(softmax)(energies)
-    # Use dotor together with "alphas" and "a" to compute the context vector to be given to the next (post-attention) LSTM-cell (≈ 1 line)
     context = Dot(axes = 1)([alphas, a])
-    ### END CODE HERE ###
     
     return context
 
@@ -172,22 +165,11 @@ outputs = []
 
 a = Bidirectional(LSTM(n_a, return_sequences=True))(embedded_sequences)
 
-
-for t in range(1):
-    
-        # Step 2.A: Perform one step of the attention mechanism to get back the context vector at step t (≈ 1 line)
-        context = one_step_attention(a, s)
-        
-        # Step 2.B: Apply the post-attention LSTM cell to the "context" vector.
-        # Don't forget to pass: initial_state = [hidden state, cell state] (≈ 1 line)
-        #s, _, c = LSTM(n_s, return_state = True, initial_state = [s, c])(context)
-        s, _, c = post_activation_LSTM_cell(context, initial_state = [s, c])
-        
-        # Step 2.C: Apply Dense layer to the hidden state output of the post-attention LSTM (≈ 1 line)
-        out = Dense(1, activation='sigmoid')(s)
-        
-        # Step 2.D: Append "out" to the "outputs" list (≈ 1 line)
-        outputs.append(out)
+   
+context = one_step_attention(a, s)        
+s, _, c = post_activation_LSTM_cell(context, initial_state = [s, c])        
+out = Dense(6, activation='sigmoid')(s)        
+outputs.append(out)
 
 
 
@@ -199,7 +181,7 @@ model.compile(loss='binary_crossentropy',
 
 
 #model.fit(x = data, y = labels, batch_size=batch_size, epochs=1, validation_split=0.2)
-model.fit(x = [data, s_input, c_input], y = temp, batch_size=batch_size, epochs=1, validation_split=0.2)
+model.fit(x = [data, s_input, c_input], y = labels, batch_size=batch_size, epochs=1, validation_split=0.2)
 
 
 

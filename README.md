@@ -34,7 +34,7 @@ I ran training separately for each label type on 1 epoch with this results:
 5: 0.9718
 mean = 0.9428
 
-[Feb 23: I have also subsequently built an attention model with the following results after 1 epoch:
+[Feb 24: I have also subsequently built an attention model with the following results after 1 epoch:
 
 0: 0.8932
 1: 0.9672
@@ -46,6 +46,8 @@ mean = 0.9440
 Slight improvement, but it appears that model changes have largely exhausted the potential. I get marginal changes with different model, bigger model, different building blocks, etc. I see no significant improvement of the training set performance. Going forward, I will focus mainly on the inputs and error correction.]
 
 If I run all 6 together, after 1 epoch I get 0.9348. I wonder whether this really has to do with separate trainings for each label type or just a random variation, but it may be safer to run each label separately, and also come up with individual cut-off values for each label type. After I added back the '!' I get 0.9364 after 1 epoch, and the words are from the shrunk train set only. Again, small and possibly random difference, but let's keep '!' going forward. Train two more epochs for a total 3 and get 0.9435.
+
+[Feb 25: on all 6 together with attention model got 0.9275 after 1 epoch, and 0.9350  after 3 epochs]
 
 Removed \' from dictionary after 1 epoch get 0.9361 = good. On two more epochs for a total 3 get 0.9424  => put it back in.
 
