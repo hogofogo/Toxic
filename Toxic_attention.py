@@ -161,16 +161,14 @@ s0 = Input(shape=(n_s,), name='s0')
 c0 = Input(shape=(n_s,), name='c0')
 s = s0
 c = c0
-outputs = []
+
 
 a = Bidirectional(LSTM(n_a, return_sequences=True))(embedded_sequences)
 
    
 context = one_step_attention(a, s)        
 s, _, c = post_activation_LSTM_cell(context, initial_state = [s, c])        
-out = Dense(6, activation='sigmoid')(s)        
-outputs.append(out)
-
+outputs = Dense(6, activation='sigmoid')(s)        
 
 
 model = Model(inputs = [sequence_input, s0, c0], outputs = outputs)
