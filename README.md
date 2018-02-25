@@ -15,7 +15,7 @@ Given average train sequence length is 65, it might make sense to try attention 
 
 I downsampled non-labeled data (see data clearning below) and got accuracy of ~94 percent + in various training sets which is better than that on the full set.
 
-##I Data cleaning
+## Data cleaning
 
 An obvious problem with the dataset is its skewed nature: ~90 percent of entries are non-toxic. I undersampled non-toxic comments to make labels more balanced; this proved helpful. I built a dataset split approx 1:2 (all toxic comments and 2/3 random non-toxic comments) and trained it with 94 percent accuracy; mind that the baseline changed from ~90 percent non-toxic to ~65 percent non-toxic). It still remains skewed with respect to individual label types, but much less.
 
