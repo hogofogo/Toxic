@@ -25,17 +25,16 @@ Data examination revealed that a lot of toxic comments are caps and have a lot o
 
 In the mean time, I ran a model prediction on a sample and there's work to be done. First, the model output is probabilities, not binary values and it appears that Keras deprecated the conversion of probability outputs to binary values - not a problem, but will require a careful choice of threshold, and possibly separate for each label type if I decide to run separate trainings for each label type, like the below.
 
-I ran training separately for each label type on 1 epoch with this results:
-0: 0.8952 	
-1: 0.9665
-2: 0.9320
-3: 0.9897
-4: 0.9015
-5: 0.9718
-mean = 0.9428
+[Feb25 separate run for each categorical value on 3 epochs, 20 percent validation and 30 percent drop; essentially the model gets retrained consecutively for each new label, and 3 epochs was enough for the loss function to stop decreasing]:
+0: 0.9002 	
+1: 0.9644
+2: 0.9346
+3: 0.9898
+4: 0.9090
+5: 0.9734
+mean = 0.9452
 
 [Feb 24: I have also subsequently built an attention model with the following results after 1 epoch:
-
 0: 0.8932
 1: 0.9672
 2: 0.9316
@@ -45,7 +44,7 @@ mean = 0.9428
 mean = 0.9440
 Slight improvement, but it appears that model changes have largely exhausted the potential. I get marginal changes with different model, bigger model, different building blocks, etc. I see no significant improvement of the training set performance. Going forward, I will focus mainly on the inputs and error correction.]
 
-If I run all 6 together, after 1 epoch I get 0.9348. I wonder whether this really has to do with separate trainings for each label type or just a random variation, but it may be safer to run each label separately, and also come up with individual cut-off values for each label type. After I added back the '!' I get 0.9364 after 1 epoch, and the words are from the shrunk train set only. Again, small and possibly random difference, but let's keep '!' going forward. Train two more epochs for a total 3 and get 0.9435.
+If I run all 6 together, after 1 epoch I get 0.9348. I wonder whether this really has to do with separate trainings for each label type or just a random variation, but it may be safer to run each label separately. After I added back the '!' I get 0.9364 after 1 epoch, and the words are from the shrunk train set only. Again, small and possibly random difference, but let's keep '!' going forward. Train two more epochs for a total 3 and get 0.9435.
 
 [Feb 25: on all 6 together with attention model got 0.9275 after 1 epoch, and 0.9350  after 3 epochs]
 
