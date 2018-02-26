@@ -42,7 +42,7 @@ mean = 0.9452
 4: 0.9051
 5: 0.9764
 mean = 0.9440
-Slight improvement, but it appears that model changes have largely exhausted the potential. I get marginal changes with different model, bigger model, different building blocks, etc. I see no significant improvement of the training set performance. Going forward, I will focus mainly on the inputs and error correction.]
+Slight improvement, but it appears that model changes have largely exhausted the potential. I get marginal changes with different model, bigger model, different building blocks, etc. I see no significant improvement of the training set performance. Going forward, I will focus mainly on the inputs and error correction. that said, looks promising; i will try 3 epochs and perhaps drop]
 
 If I run all 6 together, after 1 epoch I get 0.9348. I wonder whether this really has to do with separate trainings for each label type or just a random variation, but it may be safer to run each label separately. After I added back the '!' I get 0.9364 after 1 epoch, and the words are from the shrunk train set only. Again, small and possibly random difference, but let's keep '!' going forward. Train two more epochs for a total 3 and get 0.9435.
 
