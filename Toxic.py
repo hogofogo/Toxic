@@ -15,6 +15,7 @@ from keras.layers import Dense, Embedding, GlobalMaxPooling1D, LSTM, Dropout, Ac
 from keras.preprocessing.text import Tokenizer
 from keras.optimizers import Adam
 import os
+from keras.utils import to_categorical
 
 
 
@@ -49,9 +50,47 @@ data_df = data_df.sample(frac=1).reset_index(drop=True)
 
 
 
+
+#DATA CLEANING AND FEATURE ENGINEERING UTILITIES
+
+def feature_enhancement(input_column = train_data['comment_text']):
+#The function scross through the list of comments and builds features for the number
+#and ratio of exclamation marks and caps in the comment
+#returns:
+#   number of caps  
+#   ratio of caps
+#   number of excl marks
+#   ratio of excl marks
+    
+    exclmarks_ = []
+    exclmarks_ratio_ =[]
+    caps_ = [] 
+    caps_ratio_ = []
+    
+
+    for comment in range(len(input_column)):
+        exam_string = input_column[comment]
+        exam_chars = list(exam_string)
+        exam_chars = [w for w in exam_chars if w.istitle()]
+        exclmarks = exam_string.count('!')
+        exclmarks_ratio = exclmarks/float(len(exam_string))
+        caps = len(exam_chars)
+        caps_ratio = caps/float(len(exam_string))
+        
+        exclmarks_.append(exclmarks)
+        exclmarks_ratio_.append(exclmarks_ratio)
+        caps_.append(caps) 
+        caps_ratio_.append(caps_ratio)
+
+    return exclmarks_, exclmarks_ratio_, caps_, caps_ratio_
+
+
+exclmarks, exclmarks_ratio, caps, caps_ratio = feature_enhancement(input_column = train_data['comment_text'])
+
+
 #CREATE TRAIN AND TEST SETS
 X_train = data_df['comment_text'].values
-X_test = test_data['comment_text'].values
+#X_test = test_data['comment_text'].values
 y_train = data_df[['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']].values
                    
 max_features = 25000  # number of words to keep
@@ -76,7 +115,7 @@ print('Found %s unique tokens.' % len(word_index))
 
 data = sequence.pad_sequences(x_train, maxlen=maxlen)
 #labels = y_train[:,1]
-labels = y_train
+labels = to_categorical(y_train,num_classes = None)
 #labels = to_categorical(np.asarray(labels))
 print('Shape of data tensor:', data.shape)
 print('Shape of label tensor:', labels.shape)
@@ -117,10 +156,10 @@ sequence_input = Input(shape=(maxlen,), dtype='int32')
 embedded_sequences = embedding_layer(sequence_input)
 
 X = LSTM(128, return_sequences=True)(embedded_sequences)
-X = Dropout(0.5)(X)
+X = Dropout(0.4)(X)
 X = LSTM(128, return_sequences = False)(X)
-X = Dropout(0.5)(X)
-X = Dense(6, activation = 'sigmoid')(X)
+X = Dropout(0.4)(X)
+X = Dense(2, activation = 'sigmoid')(X)
 #X = Activation('sigmoid')(X)
 
 
@@ -129,9 +168,9 @@ model.compile(loss='binary_crossentropy',
               optimizer='rmsprop',
               metrics=['acc'])
 
-
  
 model.fit(x = data, y = labels, batch_size=batch_size, epochs=1, validation_split=0.2)
+
 
 
 
@@ -144,8 +183,29 @@ sample_result = model.predict(sample_data)
 
 sample_result = []
 #TEST INDIVIDUAL LABEL TYPE PERFORMANCE
-for i in range(6):
-    labels = y_train[:,i]
-    model.fit(x = data, y = labels, batch_size=batch_size, epochs=1, validation_split=0.2)
-    res = model.predict(sample_data)
-    sample_result.append(res)
+def evaluate_model():
+    for i in range(6):
+        labels = y_train[:,i]
+        labels = to_categorical(labels,num_classes = None)
+        model.fit(x = data, y = labels, batch_size=batch_size, epochs=3, validation_split=0.2)
+        model.save('/Users/vlad/Projects/Toxic/model_' + str(i) +'.h5')
+        
+
+
+def get_predictions():
+
+    pred_X = train_data['comment_text']
+    pred_X = tokenizer.texts_to_sequences(pred_X)
+    pred_X = sequence.pad_sequences(pred_X, maxlen=maxlen)
+    
+    threshold = 0.5
+    predictions = []
+
+    for i in range(6):
+        model.load_weights('/Users/vlad/Projects/Toxic/model_' + str(i) +'.h5', by_name=True)
+        prediction = model.predict(pred_X)
+        prediction = (prediction[:,0] < threshold).astype(np.int)
+        predictions.append(prediction)
+        print(i)
+        
+    return predictions

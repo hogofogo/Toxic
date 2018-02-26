@@ -164,11 +164,13 @@ c = c0
 
 
 a = Bidirectional(LSTM(n_a, return_sequences=True))(embedded_sequences)
+a = Dropout(0.3)(a)
 
    
 context = one_step_attention(a, s)        
 s, _, c = post_activation_LSTM_cell(context, initial_state = [s, c])        
-outputs = Dense(6, activation='sigmoid')(s)        
+s = Dropout(0.3)(s)
+outputs = Dense(2, activation='sigmoid')(s)        
 
 
 model = Model(inputs = [sequence_input, s0, c0], outputs = outputs)
@@ -191,8 +193,9 @@ sample_result = model.predict(sample_data)
 
 sample_result = []
 #TEST INDIVIDUAL LABEL TYPE PERFORMANCE
-for i in range(6):
-    labels = y_train[:,i]
-    model.fit(x = data, y = labels, batch_size=batch_size, epochs=1, validation_split=0.2)
-    res = model.predict(sample_data)
-    sample_result.append(res)
+def evaluate_model():
+    for i in range(6):
+        labels = y_train[:,i]
+        labels = to_categorical(labels,num_classes = None)
+        model.fit(x = [data, s_input, c_input], y = labels, batch_size=batch_size, epochs=3, validation_split=0.2)
+     

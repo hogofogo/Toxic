@@ -26,23 +26,26 @@ Data examination revealed that a lot of toxic comments are caps and have a lot o
 In the mean time, I ran a model prediction on a sample and there's work to be done. First, the model output is probabilities, not binary values and it appears that Keras deprecated the conversion of probability outputs to binary values - not a problem, but will require a careful choice of threshold, and possibly separate for each label type if I decide to run separate trainings for each label type, like the below.
 
 [Feb25 separate run for each categorical value on 3 epochs, 20 percent validation and 30 percent drop; essentially the model gets retrained consecutively for each new label, and 3 epochs was enough for the loss function to stop decreasing]:
-0: 0.9002 	
-1: 0.9644
-2: 0.9346
-3: 0.9898
-4: 0.9090
-5: 0.9734
-mean = 0.9452
+dropoff 0.3	dropoff 0.4
+0: 0.9002 	0.9019
+1: 0.9644	0.9647
+2: 0.9346	0.9335
+3: 0.9898	0.9895
+4: 0.9090	0.9114
+5: 0.9734	0.9740
+mean = 0.9452	0.9458
 
-[Feb 24: I have also subsequently built an attention model with the following results after 1 epoch:
-0: 0.8932
-1: 0.9672
-2: 0.9316
-3: 0.9902
-4: 0.9051
-5: 0.9764
-mean = 0.9440
-Slight improvement, but it appears that model changes have largely exhausted the potential. I get marginal changes with different model, bigger model, different building blocks, etc. I see no significant improvement of the training set performance. Going forward, I will focus mainly on the inputs and error correction. that said, looks promising; i will try 3 epochs and perhaps drop]
+[Feb 26: the attention model show the following results after 3 epochs; 20 percent validation and 30 percent dropoff after each lstm step]:
+0: 0.9006
+1: 0.9604
+2: 0.9351
+3: 0.9908
+4: 0.9081
+5: 0.9747
+mean = 0.9450
+It appears that model changes have largely exhausted the potential. I get marginal changes with different model, bigger model, different building blocks, etc. I see no significant improvement of the training set performance. Going forward, I will focus mainly on the inputs and error correction. that said, looks promising; i will try 3 epochs and perhaps drop regularization]
+
+[I also believe there is some overfitting happening for both models, especially the attention; I will keep the same number of epochs but try increasing dropoff to 50 percent.]
 
 If I run all 6 together, after 1 epoch I get 0.9348. I wonder whether this really has to do with separate trainings for each label type or just a random variation, but it may be safer to run each label separately. After I added back the '!' I get 0.9364 after 1 epoch, and the words are from the shrunk train set only. Again, small and possibly random difference, but let's keep '!' going forward. Train two more epochs for a total 3 and get 0.9435.
 
