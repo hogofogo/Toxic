@@ -44,8 +44,8 @@ train_data['overall'] = train_data.drop(['id', 'comment_text'], axis = 1).max(ax
 x_ones = train_data.ix[train_data['overall'] == 1]
 x_zeros = train_data.ix[train_data['overall'] == 0]
 #shuffle data
-x_zeros = x_zeros.sample(n = 30000, replace = False, axis = 0)
-data_df = pd.concat([x_ones, x_zeros])
+x_zeros = x_zeros.sample(n = 90000, replace = False, axis = 0)
+data_df = pd.concat([x_ones, x_zeros, x_ones, x_ones])
 data_df = data_df.sample(frac=1).reset_index(drop=True)
 
 
@@ -93,7 +93,7 @@ X_train = data_df['comment_text'].values
 #X_test = test_data['comment_text'].values
 y_train = data_df[['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']].values
                    
-max_features = 25000  # number of words to keep
+max_features = 250000  # number of words to keep
 maxlen = 100  # max length of the comments in the model
 batch_size = 64  # batch size for the model
 embedding_dims = 100  # dimension of the hidden variable, i.e. the embedding dimension
@@ -183,11 +183,11 @@ sample_result = model.predict(sample_data)
 
 sample_result = []
 #TEST INDIVIDUAL LABEL TYPE PERFORMANCE
-def evaluate_model():
+def evaluate_model(epochs = 1):
     for i in range(6):
         labels = y_train[:,i]
         labels = to_categorical(labels,num_classes = None)
-        model.fit(x = data, y = labels, batch_size=batch_size, epochs=3, validation_split=0.2)
+        model.fit(x = data, y = labels, batch_size=batch_size, epochs=epochs, validation_split=0.1)
         model.save('/Users/vlad/Projects/Toxic/model_' + str(i) +'.h5')
         
 
@@ -209,3 +209,28 @@ def get_predictions():
         print(i)
         
     return predictions
+
+
+predictions = get_predictions()
+
+
+def evaluate_predictions(column = 0):
+    comment = []
+    groundtruth = []
+    predict = []
+    
+    groundtruth_labels = train_data[['toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate']].values
+    predicted_labels = np.concatenate((predictions[0].reshape(len(predictions[0]),1), predictions[1].reshape(len(predictions[1]),1), predictions[2].reshape(len(predictions[2]),1), predictions[3].reshape(len(predictions[3]),1), predictions[4].reshape(len(predictions[4]),1), predictions[5].reshape(len(predictions[5]),1)), axis = 1)
+    for i in range(len(predicted_labels)):
+        if np.array_equal(groundtruth_labels[i,column], predicted_labels[i,column]) != True:
+            comment.append(train_data.loc[i, 'comment_text'])
+            groundtruth.append(str(groundtruth_labels[i,column]))
+            predict.append(str(predicted_labels[i,column]))
+            
+    return comment, groundtruth, predict
+    
+
+result = pd.DataFrame({'comment': comment, 'groundtruth': groundtruth, 'predict': predict})    
+
+
+  
