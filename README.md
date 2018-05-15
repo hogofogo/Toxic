@@ -36,7 +36,7 @@ In addition, I experimented with two different kinds of setup: the task required
 
 ## Results
 
-I selected five best-performing models, including LSTM built on GloVE, LSTM built on Word2Vec, 1D convolutional model built on GloVe and two chacater-based 1D convolutional models built with different kernel sizes. The assembly resulted in 0.9840 AUC score.
+I selected several best-performing models, including LSTM built on GloVE, LSTM built on Word2Vec, 1D convolutional model built on GloVe and two chacater-based 1D convolutional models built with different kernel sizes. The assembly resulted in 0.9840 AUC score.
 
 
 
